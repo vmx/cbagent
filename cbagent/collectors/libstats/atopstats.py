@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from fabric.api import run
+from fabric.api import sudo
 
 from cbagent.collectors.libstats.remotestats import (
     RemoteStats, multi_node_task, single_node_task)
@@ -17,12 +17,12 @@ class AtopStats(RemoteStats):
 
     @multi_node_task
     def stop_atop(self):
-        run("killall -q atop")
-        run("rm -rf /tmp/*.atop")
+        sudo("killall -q atop")
+        sudo("rm -rf /tmp/*.atop")
 
     @multi_node_task
     def start_atop(self):
-        run("nohup atop -a -w {0} 5 > /dev/null 2>&1 &".format(self.logfile),
+        sudo("nohup atop -a -w {0} 5 > /dev/null 2>&1 &".format(self.logfile),
             pty=False)
 
     @single_node_task
@@ -37,36 +37,36 @@ class AtopStats(RemoteStats):
 
     @single_node_task
     def _get_vsize_column(self):
-        output = run("atop -m 1 1 | grep PID")
+        output = sudo("atop -m 1 1 | grep PID")
         return output.split().index("VSIZE")
 
     @single_node_task
     def _get_rss_column(self):
-        output = run("atop -m 1 1 | grep PID")
+        output = sudo("atop -m 1 1 | grep PID")
         return output.split().index("RSIZE")
 
     @single_node_task
     def _get_cpu_column(ip):
-        output = run("atop 1 1 | grep PID")
+        output = sudo("atop 1 1 | grep PID")
         return output.split().index("CPU")
 
     @multi_node_task
     def get_process_cpu(self, process):
         title = process + "_cpu"
         cmd = self._base_cmd + "| grep {0}".format(process)
-        output = run(cmd)
+        output = sudo(cmd)
         return title, output.split()[self._cpu_column]
 
     @multi_node_task
     def get_process_vsize(self, process):
         title = process + "_vsize"
         cmd = self._base_cmd + " -m | grep {0}".format(process)
-        output = run(cmd)
+        output = sudo(cmd)
         return title, output.split()[self._vsize_column]
 
     @multi_node_task
     def get_process_rss(self, process):
         title = process + "_rss"
         cmd = self._base_cmd + " -m | grep {0}".format(process)
-        output = run(cmd)
+        output = sudo(cmd)
         return title, output.split()[self._rss_column]
