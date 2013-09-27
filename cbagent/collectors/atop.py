@@ -68,6 +68,7 @@ class Atop(Collector):
 
         for disk in self.atop.get_disk_flags():
             self._extend_samples(self.atop.get_disk_read_KB(disk))
+            self._extend_samples(self.atop.get_disk_write_KB(disk))
 
         for node, samples in self._samples.iteritems():
             self.store.append(samples, cluster=self.cluster, server=node,

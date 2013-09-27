@@ -55,7 +55,7 @@ class AtopStats(RemoteStats):
 
     def add_disk_metrics(self, metrics):
         for disk in self._disk_flags:
-            metrics = metrics + ("%s_read_KB" % disk, )
+            metrics = metrics + ("%s_read_KB" % disk, "%s_write_KB" % disk)
 
         return metrics
 
@@ -112,3 +112,10 @@ class AtopStats(RemoteStats):
         cmd = self._base_cmd + " -d -f -L200 | grep 'DSK |' | grep {0}".format(disk)
         output = sudo(cmd)
         return title, output.split("|")[self._disk_read_KB_column].split()[1]
+
+    @multi_node_task
+    def get_disk_write_KB(self, disk):
+        title = disk + "_write_KB"
+        cmd = self._base_cmd + " -d -f -L200 | grep 'DSK |' | grep {0}".format(disk)
+        output = sudo(cmd)
+        return title, output.split("|")[self._disk_write_KB_column].split()[1]
