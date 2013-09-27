@@ -53,6 +53,15 @@ class AtopStats(RemoteStats):
         output = sudo("atop 1 1 | grep PID")
         return output.split().index("CPU")
 
+    def add_disk_metrics(self, metrics):
+        for disk in self._disk_flags:
+            metrics = metrics + ("%s_read_KB" % disk, )
+
+        return metrics
+
+    def get_disk_flags(self):
+        return self._disk_flags
+
     @single_node_task
     def _get_disk_flags(self):
         output = sudo("atop -d -f -L200 1 1 | grep 'DSK |'")
@@ -96,3 +105,10 @@ class AtopStats(RemoteStats):
         cmd = self._base_cmd + " -m | grep {0}".format(process)
         output = sudo(cmd)
         return title, output.split()[self._rss_column]
+
+    @multi_node_task
+    def get_disk_read_KB(self, disk):
+        title = disk + "_read_KB"
+        cmd = self._base_cmd + " -d -f -L200 | grep 'DSK |' | grep {0}".format(disk)
+        output = sudo(cmd)
+        return title, output.split("|")[self._disk_read_KB_column].split()[1]

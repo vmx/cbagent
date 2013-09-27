@@ -25,9 +25,10 @@ class Atop(Collector):
 
     def update_metadata(self):
         self.mc.add_cluster()
+        metrics = self.atop.add_disk_metrics(self.METRICS)
         for node in self.get_nodes():
             self.mc.add_server(node)
-            for metric in self.METRICS:
+            for metric in metrics:
                 self.mc.add_metric(metric, server=node,
                                    collector=self.COLLECTOR)
 
@@ -64,6 +65,9 @@ class Atop(Collector):
         self._extend_samples(self.atop.get_process_vsize("memcached"))
         self._extend_samples(self.atop.get_process_cpu("beam.smp"))
         self._extend_samples(self.atop.get_process_cpu("memcached"))
+
+        for disk in self.atop.get_disk_flags():
+            self._extend_samples(self.atop.get_disk_read_KB(disk))
 
         for node, samples in self._samples.iteritems():
             self.store.append(samples, cluster=self.cluster, server=node,
