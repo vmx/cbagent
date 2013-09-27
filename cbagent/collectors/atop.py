@@ -47,6 +47,8 @@ class Atop(Collector):
         for node, stats in data.iteritems():
             sample[node] = sample.get(node, dict())
             if isinstance(stats, dict):
+                for k, v in stats.iteritems():
+                    stats[k] = self._remove_value_units(v)
                 sample[node] = stats
             else:
                 title, value = stats
