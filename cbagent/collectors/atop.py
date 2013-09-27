@@ -44,9 +44,13 @@ class Atop(Collector):
 
     def _format_data(self, data):
         sample = dict()
-        for node, (title, value) in data.iteritems():
+        for node, stats in data.iteritems():
             sample[node] = sample.get(node, dict())
-            sample[node][title] = self._remove_value_units(value)
+            if isinstance(stats, dict):
+                sample[node] = stats
+            else:
+                title, value = stats
+                sample[node][title] = self._remove_value_units(value)
         return sample
 
     def _extend_samples(self, data):
@@ -67,8 +71,7 @@ class Atop(Collector):
         self._extend_samples(self.atop.get_process_cpu("memcached"))
 
         for disk in self.atop.get_disk_flags():
-            self._extend_samples(self.atop.get_disk_read_KB(disk))
-            self._extend_samples(self.atop.get_disk_write_KB(disk))
+            self._extend_samples(self.atop.get_disk_stats(disk))
 
         for node, samples in self._samples.iteritems():
             self.store.append(samples, cluster=self.cluster, server=node,

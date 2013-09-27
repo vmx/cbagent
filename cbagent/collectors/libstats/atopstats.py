@@ -107,15 +107,10 @@ class AtopStats(RemoteStats):
         return title, output.split()[self._rss_column]
 
     @multi_node_task
-    def get_disk_read_KB(self, disk):
-        title = disk + "_read_KB"
+    def get_disk_stats(self, disk):
         cmd = self._base_cmd + " -d -f -L200 | grep 'DSK |' | grep {0}".format(disk)
         output = sudo(cmd)
-        return title, output.split("|")[self._disk_read_KB_column].split()[1]
-
-    @multi_node_task
-    def get_disk_write_KB(self, disk):
-        title = disk + "_write_KB"
-        cmd = self._base_cmd + " -d -f -L200 | grep 'DSK |' | grep {0}".format(disk)
-        output = sudo(cmd)
-        return title, output.split("|")[self._disk_write_KB_column].split()[1]
+        t_read_KB = "%s_read_KB" % disk
+        t_write_KB = "%s_write_KB" % disk
+        return {t_read_KB: output.split("|")[self._disk_read_KB_column].split()[1],
+                t_write_KB: output.split("|")[self._disk_write_KB_column].split()[1]}
