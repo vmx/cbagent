@@ -56,7 +56,7 @@ class AtopStats(RemoteStats):
     def add_disk_metrics(self, metrics):
         for disk in self._disk_flags:
             metrics = metrics + ("%s_read_KB" % disk, "%s_write_KB" % disk)
-            metrics = metrics + ("%s_busy_percent" % disk,)
+            metrics = metrics + ("%s_busy_percent" % disk,"%s_avq_size" % disk)
 
         return metrics
 
@@ -90,6 +90,10 @@ class AtopStats(RemoteStats):
         matches = filter(lambda col: p.match(col), cols)
         self._disk_busy_column = cols.index(matches[0]) if matches else 2
 
+        p = re.compile(".*avq.*")
+        matches = filter(lambda col: p.match(col), cols)
+        self._disk_avq_column = cols.index(matches[0]) if matches else 9
+
     @multi_node_task
     def get_process_cpu(self, process):
         title = process + "_cpu"
@@ -118,6 +122,8 @@ class AtopStats(RemoteStats):
         t_read_KB = "%s_read_KB" % disk
         t_write_KB = "%s_write_KB" % disk
         t_busy_percent = "%s_busy_percent" % disk
+        t_avq_size = "%s_avq_size" % disk
         return {t_read_KB: output.split("|")[self._disk_read_KB_column].split()[1],
                 t_write_KB: output.split("|")[self._disk_write_KB_column].split()[1],
-                t_busy_percent: output.split("|")[self._disk_busy_column].split()[1]}
+                t_busy_percent: output.split("|")[self._disk_busy_column].split()[1],
+                t_avq_size: output.split("|")[self._disk_avq_column].split()[1]}
