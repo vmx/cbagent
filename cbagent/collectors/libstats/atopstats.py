@@ -1,7 +1,7 @@
 import re
 from uuid import uuid4
 
-from fabric.api import sudo
+from fabric.api import run
 
 from cbagent.collectors.libstats.remotestats import (
     RemoteStats, multi_node_task, single_node_task)
@@ -18,12 +18,12 @@ class AtopStats(RemoteStats):
 
     @multi_node_task
     def stop_atop(self):
-        sudo("killall -q atop")
-        sudo("rm -rf /tmp/*.atop")
+        run("killall -q atop")
+        run("rm -rf /tmp/*.atop")
 
     @multi_node_task
     def start_atop(self):
-        sudo("nohup atop -a -w {0} 5 > /dev/null 2>&1 &".format(self.logfile),
+        run("nohup atop -a -w {0} 5 > /dev/null 2>&1 &".format(self.logfile),
             pty=False)
 
     @single_node_task
@@ -40,17 +40,17 @@ class AtopStats(RemoteStats):
 
     @single_node_task
     def _get_vsize_column(self):
-        output = sudo("atop -m 1 1 | grep PID")
+        output = run("atop -m 1 1 | grep PID")
         return output.split().index("VSIZE")
 
     @single_node_task
     def _get_rss_column(self):
-        output = sudo("atop -m 1 1 | grep PID")
+        output = run("atop -m 1 1 | grep PID")
         return output.split().index("RSIZE")
 
     @single_node_task
     def _get_cpu_column(ip):
-        output = sudo("atop 1 1 | grep PID")
+        output = run("atop 1 1 | grep PID")
         return output.split().index("CPU")
 
     def add_disk_metrics(self, metrics):
@@ -65,13 +65,13 @@ class AtopStats(RemoteStats):
 
     @single_node_task
     def _get_disk_flags(self):
-        output = sudo("atop -d -f -L200 1 1 | grep 'DSK |'")
+        output = run("atop -d -f -L200 1 1 | grep 'DSK |'")
         return map(lambda row: row.split("|")[self._disk_flag_column].strip(),
                    output.split("\n"))
 
     @single_node_task
     def _get_disk_columns(self):
-        output = sudo("atop -d -f -L200 1 1 | grep 'DSK |' | sed -n 1p")
+        output = run("atop -d -f -L200 1 1 | grep 'DSK |' | sed -n 1p")
         cols = output.split("|")
 
         p = re.compile(".*sd.*|.*dm.*")
@@ -98,27 +98,27 @@ class AtopStats(RemoteStats):
     def get_process_cpu(self, process):
         title = process + "_cpu"
         cmd = self._base_cmd + "| grep {0}".format(process)
-        output = sudo(cmd)
+        output = run(cmd)
         return title, output.split()[self._cpu_column]
 
     @multi_node_task
     def get_process_vsize(self, process):
         title = process + "_vsize"
         cmd = self._base_cmd + " -m | grep {0}".format(process)
-        output = sudo(cmd)
+        output = run(cmd)
         return title, output.split()[self._vsize_column]
 
     @multi_node_task
     def get_process_rss(self, process):
         title = process + "_rss"
         cmd = self._base_cmd + " -m | grep {0}".format(process)
-        output = sudo(cmd)
+        output = run(cmd)
         return title, output.split()[self._rss_column]
 
     @multi_node_task
     def get_disk_stats(self, disk):
         cmd = self._base_cmd + " -d -f -L200 | grep 'DSK |' | grep {0}".format(disk)
-        output = sudo(cmd)
+        output = run(cmd)
         t_read_KB = "%s_read_KB" % disk
         t_write_KB = "%s_write_KB" % disk
         t_busy_percent = "%s_busy_percent" % disk
