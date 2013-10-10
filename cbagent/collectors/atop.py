@@ -56,6 +56,8 @@ class Atop(Collector):
         return sample
 
     def _extend_samples(self, data):
+        if not data:
+            return
         data = self._format_data(data)
         if not self._samples:
             self._samples = data
