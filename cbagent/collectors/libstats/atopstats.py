@@ -119,6 +119,9 @@ class AtopStats(RemoteStats):
     def get_disk_stats(self, disk):
         cmd = self._base_cmd + " -d -f -L200 | grep 'DSK |' | grep {0}".format(disk)
         output = run(cmd)
+        if output.return_code != 0:
+            self._disk_flags.remove(disk)
+            return {}
         t_read_KB = "%s_read_KB" % disk
         t_write_KB = "%s_write_KB" % disk
         t_busy_percent = "%s_busy_percent" % disk
