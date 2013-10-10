@@ -55,8 +55,8 @@ class AtopStats(RemoteStats):
 
     def add_disk_metrics(self, metrics):
         for disk in self._disk_flags:
-            metrics = metrics + ("%s_read_KB/r" % disk, "%s_write_KB/w" % disk)
-            metrics = metrics + ("%s_read_MB/s" % disk, "%s_write_MB/s" % disk)
+            metrics = metrics + ("%s_read_KB_r" % disk, "%s_write_KB_w" % disk)
+            metrics = metrics + ("%s_read_MB_s" % disk, "%s_write_MB_s" % disk)
             metrics = metrics + ("%s_busy_percent" % disk,"%s_avq_size" % disk)
 
         return metrics
@@ -131,10 +131,10 @@ class AtopStats(RemoteStats):
         if output.return_code != 0:
             self._disk_flags.remove(disk)
             return {}
-        t_read_KB = "%s_read_KB/r" % disk
-        t_write_KB = "%s_write_KB/w" % disk
-        t_read_MB = "%s_write_MB/s" % disk
-        t_write_MB = "%s_write_MB/s" % disk
+        t_read_KB = "%s_read_KB_r" % disk
+        t_write_KB = "%s_write_KB_w" % disk
+        t_read_MB = "%s_write_MB_s" % disk
+        t_write_MB = "%s_write_MB_s" % disk
         t_busy_percent = "%s_busy_percent" % disk
         t_avq_size = "%s_avq_size" % disk
         return {t_read_KB: output.split("|")[self._disk_read_KB_column].split()[1],
