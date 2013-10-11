@@ -133,7 +133,7 @@ class AtopStats(RemoteStats):
             return {}
         t_read_KB = "%s_read_KB_r" % disk
         t_write_KB = "%s_write_KB_w" % disk
-        t_read_MB = "%s_write_MB_s" % disk
+        t_read_MB = "%s_read_MB_s" % disk
         t_write_MB = "%s_write_MB_s" % disk
         t_busy_percent = "%s_busy_percent" % disk
         t_avq_size = "%s_avq_size" % disk
