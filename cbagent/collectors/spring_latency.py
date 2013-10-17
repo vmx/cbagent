@@ -73,26 +73,27 @@ class SpringTuqLatency(SpringLatency):
 
     METRICS = ("latency_tuq",)
 
-    def __init__(self, settings, workload, indexes, prefix=None):
+    def __init__(self, settings, workload, indexes, tuq_server, prefix=None):
         super(Latency, self).__init__(settings)
         self.clients = []
-        for bucket in self.get_buckets():
-            client = TuqClient(bucket=bucket, host=settings.master_node,
-                               username=settings.rest_username,
-                               password=settings.rest_password)
-            self.clients.append((bucket, client))
+        bucket = list(self.get_buckets())[0]
+        client = TuqClient(bucket=bucket, host=settings.master_node,
+                           username=settings.rest_username,
+                           password=settings.rest_password,
+                           tuq_server=tuq_server)
+        self.clients.append((bucket, client))
 
         self.existing_keys = ExistingKey(workload.working_set,
                                          workload.working_set_access,
                                          prefix=prefix)
         self.new_docs = NewDocument(workload.size)
         self.items = workload.items
-        self.new_tuqs = NewTuq(indexes)
+        self.new_tuqs = NewTuq(indexes, bucket)
 
     def measure(self, client, metric):
         key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
         doc = self.new_docs.next(key)
-        tuq = self.new_tuqs.next(doc, client.bucket)
+        tuq = self.new_tuqs.next(doc)
 
         t0 = time()
         client.query(tuq)
