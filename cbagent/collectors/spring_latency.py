@@ -3,6 +3,8 @@ from time import time
 from spring.docgen import ExistingKey, NewDocument
 from spring.querygen import NewQuery
 from spring.cbgen import CBGen
+from spring.tuqgen import NewTuq
+from spring.tuqclient import TuqClient
 
 from cbagent.collectors import Latency
 
@@ -65,3 +67,41 @@ class SpringQueryLatency(SpringLatency):
         t0 = time()
         client.query(ddoc_name, view_name, query=query)
         return 1000 * (time() - t0)
+
+class SpringTuqLatency(SpringLatency):
+    COLLECTOR = "spring_tuq_latency"
+
+    METRICS = ("latency_tuq",)
+
+    def __init__(self, settings, workload, indexes, prefix=None):
+        super(Latency, self).__init__(settings)
+        self.clients = []
+        for bucket in self.get_buckets():
+            client = TuqClient(bucket=bucket, host=settings.master_node,
+                               username=settings.rest_username,
+                               password=settings.rest_password)
+            self.clients.append((bucket, client))
+
+        self.existing_keys = ExistingKey(workload.working_set,
+                                         workload.working_set_access,
+                                         prefix=prefix)
+        self.new_docs = NewDocument(workload.size)
+        self.items = workload.items
+        self.new_tuqs = NewTuq(indexes)
+
+    def measure(self, client, metric):
+        key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
+        doc = self.new_docs.next(key)
+        tuq = self.new_tuqs.next(doc, client.bucket)
+
+        t0 = time()
+        client.query(tuq)
+        return 1000 * (time() - t0)
+
+    def sample(self):
+        for bucket, client in self.clients:
+            samples = {}
+            for metric in self.METRICS:
+                samples[metric] = self.measure(client, metric)
+            self.store.append(samples, cluster=self.cluster,
+                              bucket=bucket, collector=self.COLLECTOR)
