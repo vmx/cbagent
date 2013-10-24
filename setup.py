@@ -23,6 +23,9 @@ setup(
         ]
     },
     include_package_data=True,
+    dependency_links=[
+        'http://github.com/couchbaselabs/spring/tarball/master'
+    ],
     install_requires=[
         'argparse==1.2.1',
         'couchbase==1.0.0',
@@ -31,6 +34,6 @@ setup(
         'logger',
         'requests==1.2.0',
         'seriesly',
-        'spring'
+        'spring',
     ],
 )
