@@ -1,4 +1,5 @@
 from time import time
+from logger import logger
 
 from spring.docgen import ExistingKey, NewDocument
 from spring.querygen import NewQuery
@@ -102,6 +103,7 @@ class SpringTuqLatency(SpringLatency):
         if metric == "latency_tuq":
             self.tuq_client.query(tuq)
         else:
+            logger.info("Firing cb query: %s, %s, %s" % (ddoc_name, view_name, query))
             self.cb_client.query(ddoc_name, view_name, query=query)
         return 1000 * (time() - t0)
 
