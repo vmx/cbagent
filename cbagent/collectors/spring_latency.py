@@ -69,6 +69,7 @@ class SpringQueryLatency(SpringLatency):
         client.query(ddoc_name, view_name, query=query)
         return 1000 * (time() - t0)
 
+
 class SpringTuqLatency(SpringLatency):
     COLLECTOR = "spring_tuq_latency"
 
@@ -78,12 +79,15 @@ class SpringTuqLatency(SpringLatency):
         super(Latency, self).__init__(settings)
         self.clients = []
         self.bucket = list(self.get_buckets())[0]
-        self.tuq_client = TuqClient(bucket=self.bucket, host=settings.master_node,
+        self.tuq_client = TuqClient(bucket=self.bucket,
+                                    host=settings.master_node,
                                     username=settings.rest_username,
                                     password=settings.rest_password,
                                     tuq_server=tuq_server)
-        self.cb_client = CBGen(bucket=self.bucket, host=settings.master_node,
-                               username=self.bucket, password=settings.rest_password)
+        self.cb_client = CBGen(bucket=self.bucket,
+                               host=settings.master_node,
+                               username=self.bucket,
+                               password=settings.rest_password)
 
         self.existing_keys = ExistingKey(workload.working_set,
                                          workload.working_set_access,

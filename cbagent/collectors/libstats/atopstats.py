@@ -57,8 +57,7 @@ class AtopStats(RemoteStats):
         for disk in self._disk_flags:
             metrics = metrics + ("%s_read_KB_r" % disk, "%s_write_KB_w" % disk)
             metrics = metrics + ("%s_read_MB_s" % disk, "%s_write_MB_s" % disk)
-            metrics = metrics + ("%s_busy_percent" % disk,"%s_avq_size" % disk)
-
+            metrics = metrics + ("%s_busy_percent" % disk, "%s_avq_size" % disk)
         return metrics
 
     def get_disk_flags(self):
@@ -131,15 +130,17 @@ class AtopStats(RemoteStats):
         if output.return_code != 0:
             self._disk_flags.remove(disk)
             return {}
-        t_read_KB = "%s_read_KB_r" % disk
-        t_write_KB = "%s_write_KB_w" % disk
-        t_read_MB = "%s_read_MB_s" % disk
-        t_write_MB = "%s_write_MB_s" % disk
+        t_read_kb = "%s_read_KB_r" % disk
+        t_write_kb = "%s_write_KB_w" % disk
+        t_read_mb = "%s_read_MB_s" % disk
+        t_write_mb = "%s_write_MB_s" % disk
         t_busy_percent = "%s_busy_percent" % disk
         t_avq_size = "%s_avq_size" % disk
-        return {t_read_KB: output.split("|")[self._disk_read_KB_column].split()[1],
-                t_write_KB: output.split("|")[self._disk_write_KB_column].split()[1],
-                t_read_MB: output.split("|")[self._disk_read_MB_column].split()[1],
-                t_write_MB: output.split("|")[self._disk_write_MB_column].split()[1],
-                t_busy_percent: output.split("|")[self._disk_busy_column].split()[1],
-                t_avq_size: output.split("|")[self._disk_avq_column].split()[1]}
+        return {
+            t_read_kb: output.split("|")[self._disk_read_KB_column].split()[1],
+            t_write_kb: output.split("|")[self._disk_write_KB_column].split()[1],
+            t_read_mb: output.split("|")[self._disk_read_MB_column].split()[1],
+            t_write_mb: output.split("|")[self._disk_write_MB_column].split()[1],
+            t_busy_percent: output.split("|")[self._disk_busy_column].split()[1],
+            t_avq_size: output.split("|")[self._disk_avq_column].split()[1],
+        }
