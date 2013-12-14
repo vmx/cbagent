@@ -27,9 +27,7 @@ class MetadataClient(object):
         logger.info("Adding cluster: {0}".format(self.settings.cluster))
 
         url = self.base_url + "/add_cluster/"
-        params = {"name": self.settings.cluster,
-                  "rest_username": self.settings.rest_username,
-                  "rest_password": self.settings.rest_password}
+        params = {"name": self.settings.cluster}
         return url, params
 
     @post_request
@@ -38,9 +36,7 @@ class MetadataClient(object):
 
         url = self.base_url + "/add_server/"
         params = {"address": address,
-                  "cluster": self.settings.cluster,
-                  "ssh_username": self.settings.ssh_username,
-                  "ssh_password": self.settings.ssh_password}
+                  "cluster": self.settings.cluster}
         return url, params
 
     @post_request
@@ -48,20 +44,16 @@ class MetadataClient(object):
         logger.info("Adding bucket: {0}".format(name))
 
         url = self.base_url + "/add_bucket/"
-        params = {"name": name, "type": "Couchbase",
-                  "cluster": self.settings.cluster}
+        params = {"name": name,  "cluster": self.settings.cluster}
         return url, params
 
     @post_request
-    def add_metric(self, name, bucket=None, server=None, unit=None,
-                   description=None, collector=None):
+    def add_metric(self, name, bucket=None, server=None, collector=None):
         logger.debug("Adding metric: {0}".format(name))
 
-        url = self.base_url + "/add_metric_or_event/"
-        params = {"name": name, "type": "metric",
-                  "cluster": self.settings.cluster}
-        for extra_param in ("bucket", "server", "unit", "description",
-                            "collector"):
+        url = self.base_url + "/add_metric/"
+        params = {"name": name, "cluster": self.settings.cluster}
+        for extra_param in ("bucket", "server", "collector"):
             if eval(extra_param) is not None:
                 params[extra_param] = eval(extra_param)
         return url, params

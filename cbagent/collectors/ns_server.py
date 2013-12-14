@@ -35,9 +35,9 @@ class NSServer(Collector):
             stats_directory = self.get_http(path=stats["directoryURI"])
             for block in stats_directory["blocks"]:
                 for metric in block["stats"]:
-                    yield metric["name"], bucket, None, metric["desc"]
+                    yield metric["name"], bucket, None
                     for node in nodes:
-                        yield metric["name"], bucket, node, metric["desc"]
+                        yield metric["name"], bucket, node
 
     def update_metadata(self):
         self.mc.add_cluster()
@@ -48,7 +48,7 @@ class NSServer(Collector):
         for node in self.get_nodes():
             self.mc.add_server(node)
 
-        for metric, bucket, node, desc in self._get_metrics():
+        for metric, bucket, node in self._get_metrics():
             metric = metric.replace('/', '_')
             self.mc.add_metric(metric, bucket=bucket, server=node,
-                               description=desc, collector=self.COLLECTOR)
+                               collector=self.COLLECTOR)
