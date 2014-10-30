@@ -184,3 +184,10 @@ Running tests
 -------------
 
     $ make test
+
+Contribution
+------------
+
+[Code review](http://review.couchbase.org) is enabled for this project:
+
+    git remote add gerrit ssh://review.couchbase.org:29418/cbagent.git
