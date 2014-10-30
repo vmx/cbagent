@@ -7,6 +7,7 @@ from observe import ObserveLatency
 from net import Net
 from ns_server import NSServer
 from ps import PS
+from ps import TypePerf
 from spring_latency import SpringLatency, SpringQueryLatency, \
     SpringN1QLQueryLatency
 from sync_gateway import SyncGateway
