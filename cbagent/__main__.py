@@ -8,7 +8,7 @@ from cbagent.collectors.observe import ObserveLatency
 from cbagent.collectors.net import Net
 from cbagent.collectors.ns_server import NSServer
 from cbagent.collectors.ps import PS
-from cbagent.collectors.ps import TypePerf
+from cbagent.collectors.typeperf import TypePerf
 from cbagent.collectors.sync_gateway import SyncGateway
 from cbagent.collectors.xdcr_lag import XdcrLag
 from cbagent.settings import Settings
