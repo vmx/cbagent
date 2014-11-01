@@ -12,7 +12,7 @@ class TPStats(RemoteStats):
 
     def __init__(self, hosts, user, password):
         super(TPStats, self).__init__(hosts, user, password)
-        self.typeperf_cmd = "typeperf\"\\Process(*erl*)\\Working Set\" -sc 1|sed '3q;d'"
+        self.typeperf_cmd = "typeperf \"\\Process(*erl*)\\Working Set\" -sc 1|sed '3q;d'"
 
     @multi_node_task
     def get_samples(self, process):
@@ -21,12 +21,11 @@ class TPStats(RemoteStats):
         values = stdout.split(',')[1:5]
         maxrss = 0
         if stdout:
-            for v in value:
+            for v in values:
                 v = float(v.replace('"',''))
-            if maxrss<v:
-                maxrss=v
+                if maxrss<v:
+                    maxrss=v
             metric, multiplier = self.METRICS[0]
             title = "{}_{}".format(process, metric)
             samples[title] = float(maxrss) * multiplier
-        else:
             return samples

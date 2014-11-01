@@ -6,7 +6,7 @@ class TypePerf(Collector):
 
     COLLECTOR = "atop"  # Legacy
 
-    KNOWN_PROCESSES = ("beam.smp")
+    KNOWN_PROCESSES = ("beam.smp",)
 
     def __init__(self, settings):
         super(TypePerf, self).__init__(settings)
