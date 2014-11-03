@@ -19,13 +19,12 @@ class TPStats(RemoteStats):
         samples = {}
         stdout = run(self.typeperf_cmd)
         values = stdout.split(',')[1:5]
-        maxrss = 0
+        sum_rss = 0
         if stdout:
             for v in values:
                 v = float(v.replace('"',''))
-                if maxrss<v:
-                    maxrss=v
+                sum_rss = sum_rss + v
             metric, multiplier = self.METRICS[0]
             title = "{}_{}".format(process, metric)
-            samples[title] = float(maxrss) * multiplier
+            samples[title] = float(sum_rss) * multiplier
             return samples
