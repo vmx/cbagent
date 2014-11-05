@@ -20,7 +20,7 @@ class TPStats(RemoteStats):
         if process == "beam.smp":
             stdout = run(self.typeperf_cmd.format("erl"))
             values = stdout.split(',')[1:5]
-        else if process == "memcached":
+        elif process == "memcached":
             stdout = run(self.typeperf_cmd.format(process))
             values = stdout.split(',')[1:2]
         else:
