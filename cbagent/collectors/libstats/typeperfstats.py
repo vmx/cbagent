@@ -16,11 +16,15 @@ class TPStats(RemoteStats):
 
     @multi_node_task
     def get_samples(self, process):
-        if process == "beam.smp":
-            process = "erl"
         samples = {}
-        stdout = run(self.typeperf_cmd.format(process))
-        values = stdout.split(',')[1:5]
+        if process == "beam.smp":
+            stdout = run(self.typeperf_cmd.format("erl"))
+            values = stdout.split(',')[1:5]
+        else if process == "memcached":
+            stdout = run(self.typeperf_cmd.format(process))
+            values = stdout.split(',')[1:2]
+        else:
+            return samples
         sum_rss = 0
         if stdout:
             for v in values:
