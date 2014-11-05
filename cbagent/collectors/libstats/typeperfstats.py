@@ -12,12 +12,14 @@ class TPStats(RemoteStats):
 
     def __init__(self, hosts, user, password):
         super(TPStats, self).__init__(hosts, user, password)
-        self.typeperf_cmd = "typeperf \"\\Process(*erl*)\\Working Set\" -sc 1|sed '3q;d'"
+        self.typeperf_cmd = "typeperf \"\\Process(*{}*)\\Working Set\" -sc 1|sed '3q;d'"
 
     @multi_node_task
     def get_samples(self, process):
+        if process == "beam.smp":
+            process = "erl"
         samples = {}
-        stdout = run(self.typeperf_cmd)
+        stdout = run(self.typeperf_cmd.format(process))
         values = stdout.split(',')[1:5]
         sum_rss = 0
         if stdout:
