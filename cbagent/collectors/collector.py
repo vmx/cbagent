@@ -18,7 +18,6 @@ class Collector(object):
         self.session = requests.Session()
 
         self.interval = settings.interval
-        self.nodes = []
 
         self.cluster = settings.cluster
         self.master_node = settings.master_node
