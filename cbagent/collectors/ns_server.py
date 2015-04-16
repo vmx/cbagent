@@ -19,6 +19,11 @@ class NSServer(Collector):
     def _get_stats(self, uri):
         samples = self.get_http(path=uri)  # get last minute samples
         stats = dict()
+
+        if samples["op"]["lastTStamp"] == 0:
+            # Index and N1QL nodes don't have stats in ns_server
+            return None
+
         for metric, values in samples['op']['samples'].iteritems():
             metric = metric.replace('/', '_')
             stats[metric] = values[-1]  # only the most recent sample
@@ -27,6 +32,8 @@ class NSServer(Collector):
     def sample(self):
         for uri, bucket, host in self._get_stats_uri():
             stats = self._get_stats(uri)
+            if not stats:
+                continue
             self.update_metric_metadata(stats.keys(), bucket, host)
             self.store.append(stats, self.cluster, host, bucket, self.COLLECTOR)
 
