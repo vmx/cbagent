@@ -33,22 +33,21 @@ class Collector(object):
         self.metrics = set()
         self.updater = None
 
-    def get_http(self, path, host_port=None):
-        host_port = host_port or self.master_node
-        host, port = host_port.split(':')
-        url = "http://{}:{}{}".format(host, port, path)
+    def get_http(self, path, server=None, port=8091):
+        server = server or self.master_node
+        url = "http://{}:{}{}".format(server, port, path)
         try:
             r = self.session.get(url=url, auth=self.auth)
             if r.status_code in (200, 201, 202):
                 return r.json()
             else:
                 logger.warn("Bad response: {}".format(url))
-                return self.retry(path, host_port)
+                return self.retry(path, server, port)
         except requests.ConnectionError:
             logger.warn("Connection error: {}".format(url))
-            return self.retry(path, host_port)
+            return self.retry(path, server, port)
 
-    def retry(self, path, host_port=None):
+    def retry(self, path, server=None, port=8091):
         time.sleep(self.interval)
         for node in self.nodes:
             if self._check_node(node):
@@ -57,20 +56,19 @@ class Collector(object):
                 break
         else:
             logger.interrupt("Failed to find at least one node")
-        if host_port not in self.nodes:
-            raise RuntimeError("Bad node {}".format(host_port or ""))
+        if server not in self.nodes:
+            raise RuntimeError("Bad node {}".format(server or ""))
         else:
-            return self.get_http(path, host_port)
+            return self.get_http(path, server, port)
 
     def _check_node(self, node):
         try:
-            host, port = node.split(':')
             s = socket.socket()
-            s.connect((host, port))
+            s.connect((node, 8091))
         except socket.error:
             return False
         else:
-            if not self.get_http(path="/pools", host_port=node).get("pools"):
+            if not self.get_http(path="/pools", server=node).get("pools"):
                 return False
         return True
 
@@ -92,7 +90,7 @@ class Collector(object):
             hostname = node["hostname"].split(":")[0]
             if self.hostnames is not None and hostname not in self.hostnames:
                 continue
-            yield node["hostname"]
+            yield hostname
 
     def _update_metric_metadata(self, metrics, bucket=None, server=None):
         for metric in metrics:
