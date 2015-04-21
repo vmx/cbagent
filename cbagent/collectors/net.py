@@ -8,12 +8,10 @@ class Net(Collector):
 
     def __init__(self, settings):
         super(Net, self).__init__(settings)
-        self.ssh_username = settings.ssh_username
-        self.ssh_password = settings.ssh_password
         self.nodes = settings.hostnames or list(self.get_nodes())
         self.net = NetStat(hosts=self.nodes,
-                           user=settings.ssh_username,
-                           password=settings.ssh_password)
+                           user=self.ssh_username,
+                           password=self.ssh_password)
 
     def update_metadata(self):
         self.mc.add_cluster()

@@ -8,12 +8,10 @@ class IO(Collector):
 
     def __init__(self, settings):
         super(IO, self).__init__(settings)
-        self.ssh_username = settings.ssh_username
-        self.ssh_password = settings.ssh_password
         self.nodes = settings.hostnames or list(self.get_nodes())
         self.io = IOstat(hosts=self.nodes,
-                         user=settings.ssh_username,
-                         password=settings.ssh_password)
+                         user=self.ssh_username,
+                         password=self.ssh_password)
         self.partitions = settings.partitions
 
     def update_metadata(self):
