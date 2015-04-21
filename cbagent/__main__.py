@@ -7,6 +7,7 @@ from cbagent.collectors.latency import Latency
 from cbagent.collectors.observe import ObserveLatency
 from cbagent.collectors.net import Net
 from cbagent.collectors.ns_server import NSServer
+from cbagent.collectors.n1ql_stats import N1QLStats
 from cbagent.collectors.ps import PS
 from cbagent.collectors.typeperf import TypePerf
 from cbagent.collectors.sync_gateway import SyncGateway
@@ -29,6 +30,8 @@ def main():
                       help="Net")
     parser.add_option("--ns", action="store_true", dest="ns_server",
                       help="ns_server")
+    parser.add_option("--n1ql", action="store_true", dest="n1ql_stats",
+                      help="n1ql_stats")
     parser.add_option("--ps", action="store_true", dest="ps",
                       help="ps CPU, RSS and VSIZE")
     parser.add_option("--sg", action="store_true", dest="sync_gateway",
@@ -53,6 +56,8 @@ def main():
         collector = Net
     elif options.ns_server:
         collector = NSServer
+    elif options.n1ql_stats:
+        collector = N1QLStats
     elif options.ps:
         collector = PS
     elif options.typeperf:
