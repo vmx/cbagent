@@ -11,11 +11,9 @@ class Atop(Collector):
 
     def __init__(self, settings):
         super(Atop, self).__init__(settings)
-        self.ssh_username = settings.ssh_username
-        self.ssh_password = settings.ssh_password
         self.atop = AtopStats(hosts=tuple(self.get_nodes()),
-                              user=settings.ssh_username,
-                              password=settings.ssh_password)
+                              user=self.ssh_username,
+                              password=self.ssh_password)
 
     def restart(self):
         self.atop.restart_atop()

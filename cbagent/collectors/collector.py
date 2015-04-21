@@ -26,6 +26,8 @@ class Collector(object):
         self.buckets = settings.buckets
         self.hostnames = settings.hostnames
         self.nodes = list(self.get_nodes())
+        self.ssh_username = getattr(settings, 'ssh_username', None)
+        self.ssh_password = getattr(settings, 'ssh_password', None)
 
         self.store = SerieslyStore(settings.seriesly_host)
         self.mc = MetadataClient(settings)
