@@ -1,5 +1,3 @@
-from fabric.api import run
-
 from cbagent.collectors.libstats.remotestats import (
     RemoteStats, multi_node_task)
 
@@ -20,7 +18,7 @@ class PSStats(RemoteStats):
     @multi_node_task
     def get_samples(self, process):
         samples = {}
-        stdout = run(self.ps_cmd.format(process))
+        stdout = self.run(self.ps_cmd.format(process))
         if stdout:
             for i, value in enumerate(stdout.split()[1:1+len(self.METRICS)]):
                 metric, multiplier = self.METRICS[i]
@@ -29,7 +27,7 @@ class PSStats(RemoteStats):
             pid = stdout.split()[0]
         else:
             return samples
-        stdout = run(self.top_cmd.format(pid, process))
+        stdout = self.run(self.top_cmd.format(pid, process))
         if stdout:
             title = "{}_cpu".format(process)
             samples[title] = float(stdout.split()[8])

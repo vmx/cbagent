@@ -1,7 +1,5 @@
 from collections import defaultdict
 
-from fabric.api import run
-
 from cbagent.collectors.libstats.remotestats import (RemoteStats,
                                                      multi_node_task,
                                                      single_node_task)
@@ -16,14 +14,14 @@ class NetStat(RemoteStats):
     @single_node_task
     def detect_iface(self):
         for iface in ("eth5", "eth0", "em1"):
-            result = run("grep {} /proc/net/dev".format(iface),
-                         warn_only=True, quiet=True)
+            result = self.run("grep {} /proc/net/dev".format(iface),
+                              warn_only=True, quiet=True)
             if not result.return_code:
                 return iface
 
     def get_dev_stats(self):
         cmd = "grep {} /proc/net/dev".format(self.iface)
-        stdout = run("{0}; sleep 1; {0}".format(cmd))
+        stdout = self.run("{0}; sleep 1; {0}".format(cmd))
         s1, s2 = stdout.split('\n')
         s1 = [int(v.split(":")[-1]) for v in s1.split() if v.split(":")[-1]]
         s2 = [int(v.split(":")[-1]) for v in s2.split() if v.split(":")[-1]]
@@ -34,9 +32,8 @@ class NetStat(RemoteStats):
             "out_packets_per_sec": s2[9] - s1[9],
         }
 
-    @staticmethod
-    def get_tcp_stats():
-        stdout = run("cat /proc/net/tcp")
+    def get_tcp_stats(self):
+        stdout = self.run("cat /proc/net/tcp")
         raw_data = defaultdict(int)
         for conn in stdout.split("\n"):
             state = conn.split()[3]

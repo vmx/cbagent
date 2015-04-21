@@ -1,6 +1,3 @@
-from fabric.api import run
-
-
 from cbagent.collectors.libstats.remotestats import (
     RemoteStats, multi_node_task)
 
@@ -19,8 +16,8 @@ class IOstat(RemoteStats):
 
     def get_device_name(self, partition):
         for path in (partition, '/'):
-            stdout = run("mount | grep '{} '".format(path),
-                         warn_only=True, quiet=True)
+            stdout = self.run("mount | grep '{} '".format(path),
+                              warn_only=True, quiet=True)
             if not stdout.return_code:
                 name = stdout.split()[0]
                 if name.startswith('/dev/mapper/'):
@@ -29,7 +26,7 @@ class IOstat(RemoteStats):
                     return name
 
     def get_iostat(self, device):
-        stdout = run(
+        stdout = self.run(
             "iostat -xk 1 2 -N {} | grep -v '^$' | tail -n 2".format(device)
         )
         stdout = stdout.split()
