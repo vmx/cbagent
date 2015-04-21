@@ -1,5 +1,3 @@
-from fabric.api import run
-
 from cbagent.collectors.libstats.remotestats import (
     RemoteStats, multi_node_task)
 
@@ -18,10 +16,10 @@ class TPStats(RemoteStats):
     def get_samples(self, process):
         samples = {}
         if process == "beam.smp":
-            stdout = run(self.typeperf_cmd.format("erl"))
+            stdout = self.run(self.typeperf_cmd.format("erl"))
             values = stdout.split(',')[1:5]
         elif process == "memcached":
-            stdout = run(self.typeperf_cmd.format(process))
+            stdout = self.run(self.typeperf_cmd.format(process))
             values = stdout.split(',')[1:2]
         else:
             return samples
