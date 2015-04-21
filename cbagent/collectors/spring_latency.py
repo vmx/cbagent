@@ -1,8 +1,8 @@
 from time import time
 
 from spring.docgen import ExistingKey, NewDocument, NewNestedDocument
-from spring.querygen import NewQuery, NewQueryNG, NewN1QLQuery
-from spring.cbgen import CBGen, N1QLGen
+from spring.querygen import ViewQueryGen, ViewQueryGenByType, OldN1QLQuery
+from spring.cbgen import CBGen, OldN1QLGen
 
 from cbagent.collectors import Latency
 
@@ -67,9 +67,9 @@ class SpringQueryLatency(SpringLatency):
                  prefix=None):
         super(SpringQueryLatency, self).__init__(settings, workload, prefix)
         if index_type is None:
-            self.new_queries = NewQuery(ddocs, params)
+            self.new_queries = ViewQueryGen(ddocs, params)
         else:
-            self.new_queries = NewQueryNG(index_type, params)
+            self.new_queries = ViewQueryGenByType(index_type, params)
 
     def measure(self, client, metric):
         key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
@@ -86,8 +86,9 @@ class SpringN1QLQueryLatency(SpringQueryLatency):
         super(SpringQueryLatency, self).__init__(settings, workload, prefix)
         self.clients = []
         for bucket in self.get_buckets():
-            client = N1QLGen(bucket=bucket, host=settings.master_node,
-                             username=bucket, password=settings.bucket_password)
+            client = OldN1QLGen(bucket=bucket, host=settings.master_node,
+                                username=bucket,
+                                password=settings.bucket_password)
             self.clients.append((bucket, client))
 
-        self.new_queries = NewN1QLQuery(index_type)
+        self.new_queries = OldN1QLQuery(index_type)
