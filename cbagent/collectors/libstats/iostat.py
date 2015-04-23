@@ -22,11 +22,15 @@ class IOstat(RemoteStats):
             stdout = run("mount | grep '{} '".format(path),
                          warn_only=True, quiet=True)
             if not stdout.return_code:
-                return stdout.split()[0]
+                name = stdout.split()[0]
+                if name.startswith('/dev/mapper/'):
+                    return name.split('/dev/mapper/')[1]
+                else:
+                    return name
 
     def get_iostat(self, device):
         stdout = run(
-            "iostat -xk 1 2 {} | grep -v '^$' | tail -n 2".format(device)
+            "iostat -xk 1 2 -N {} | grep -v '^$' | tail -n 2".format(device)
         )
         stdout = stdout.split()
         header = stdout[:len(stdout)/2]
