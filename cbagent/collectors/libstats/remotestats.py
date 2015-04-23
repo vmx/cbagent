@@ -37,6 +37,7 @@ def run_local(*args, **kwargs):
 class RemoteStats(object):
 
     def __init__(self, hosts, user, password):
+        hosts = [host.split(':')[0] for host in hosts]
         self.hosts = hosts
         self.user = user
         self.password = password
