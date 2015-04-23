@@ -15,7 +15,7 @@ class PSStats(RemoteStats):
         super(PSStats, self).__init__(hosts, user, password)
         self.ps_cmd = "ps -eo pid,rss,vsize,comm | " \
                       "grep {} | grep -v grep | sort -n -k 2 | tail -n 1"
-        self.top_cmd = "top -bn2d1 -p {} | grep {}"
+        self.top_cmd = "top -bn2 -d1 -p {} | grep {}"
 
     @multi_node_task
     def get_samples(self, process):
