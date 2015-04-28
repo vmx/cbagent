@@ -6,6 +6,7 @@ from latency import Latency
 from observe import ObserveLatency
 from net import Net
 from ns_server import NSServer
+from secondary_stats import SecondaryStats
 from n1ql_stats import N1QLStats
 from ps import PS
 from typeperf import TypePerf
