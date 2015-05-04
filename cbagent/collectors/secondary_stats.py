@@ -4,7 +4,7 @@ class SecondaryStats(Collector):
 
     COLLECTOR = "secondary_stats"
 
-    def _get_secondary_stats(self):
+    def _get_secondary_stats(self, bucket):
         server = self.master_node
         server = server.split(':')[0]
         uri = "/pools/default/buckets/@index-{}/stats".format(bucket)
@@ -16,7 +16,7 @@ class SecondaryStats(Collector):
         return stats
 
     def sample(self):
-        for bucket, _ in self.get_buckets():
+        for bucket in self.get_buckets():
             stats = self._get_secondary_stats(bucket)
             if stats:
                self.update_metric_metadata(stats.keys())
