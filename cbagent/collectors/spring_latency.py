@@ -84,7 +84,7 @@ class SpringQueryLatency(SpringLatency):
 
 class SpringN1QLQueryLatency(SpringQueryLatency):
 
-    def __init__(self, settings, workload, index_type, prefix=None):
+    def __init__(self, settings, workload, prefix=None):
         super(SpringQueryLatency, self).__init__(settings, workload, prefix)
         self.clients = []
         queries = settings.new_n1ql_queries
