@@ -6,9 +6,9 @@ class Atop(Collector):
 
     COLLECTOR = "atop"
 
-    METRICS = ("beam.smp_rss", "memcached_rss", "indexer_rss", "beam.smp_vsize",
-               "memcached_vsize", "indexer_vsize", "beam.smp_cpu", "memcached_cpu",
-               "indexer_cpu")
+    METRICS = ("beam.smp_rss", "memcached_rss", "indexer_rss", "projector_rss", "beam.smp_vsize",
+               "memcached_vsize", "indexer_vsize", "projector_vsize", "beam.smp_cpu", "memcached_cpu",
+               "indexer_cpu", "projector_cpu")
 
     def __init__(self, settings):
         super(Atop, self).__init__(settings)

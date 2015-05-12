@@ -6,7 +6,7 @@ class PS(Collector):
 
     COLLECTOR = "atop"  # Legacy
 
-    KNOWN_PROCESSES = ("beam.smp", "memcached", "indexer", "sync_gateway")
+    KNOWN_PROCESSES = ("beam.smp", "memcached", "indexer", "projector",  "sync_gateway")
 
     def __init__(self, settings):
         super(PS, self).__init__(settings)
