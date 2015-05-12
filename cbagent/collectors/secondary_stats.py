@@ -19,7 +19,7 @@ class SecondaryStats(Collector):
         for bucket in self.get_buckets():
             stats = self._get_secondary_stats(bucket)
             if stats:
-               self.update_metric_metadata(stats.keys())
+               self.update_metric_metadata(stats.keys(), bucket=bucket)
                self.store.append(stats,cluster=self.cluster,
                                  bucket=bucket, collector=self.COLLECTOR)
 
