@@ -7,6 +7,7 @@ from observe import ObserveLatency
 from net import Net
 from ns_server import NSServer
 from secondary_stats import SecondaryStats
+from secondary_latency import SecondaryLatencyStats
 from n1ql_stats import N1QLStats
 from ps import PS
 from typeperf import TypePerf

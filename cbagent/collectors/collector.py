@@ -29,6 +29,7 @@ class Collector(object):
         self.ssh_username = getattr(settings, 'ssh_username', None)
         self.ssh_password = getattr(settings, 'ssh_password', None)
 
+        self.secondary_statsfile = settings.secondary_statsfile
         self.store = SerieslyStore(settings.seriesly_host)
         self.mc = MetadataClient(settings)
 
