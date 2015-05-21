@@ -10,7 +10,8 @@ from secondary_stats import SecondaryStats
 from n1ql_stats import N1QLStats
 from ps import PS
 from typeperf import TypePerf
-from spring_latency import SpringLatency, SpringQueryLatency, \
-    SpringN1QLQueryLatency
+from spring_latency import (SpringLatency, SpringQueryLatency,
+                            SpringSpatialQueryLatency,
+                            SpringN1QLQueryLatency)
 from sync_gateway import SyncGateway
 from xdcr_lag import XdcrLag
