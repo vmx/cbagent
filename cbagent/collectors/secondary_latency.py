@@ -4,12 +4,11 @@ import os.path
 class SecondaryLatencyStats(Collector):
 
     COLLECTOR = "secondaryscan_latency"
-    fname = self.secondary_statsfile
 
     def _get_secondaryscan_latency(self):
         stats = {}
         if os.path.isfile(self.secondary_statsfile):
-            with open(fname, 'rb') as fh:
+            with open(self.secondary_statsfile, 'rb') as fh:
                 first = next(fh).decode()
                 fh.seek(-200, 2)
                 last = fh.readlines()[-1].decode()
