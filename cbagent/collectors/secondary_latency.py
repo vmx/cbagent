@@ -10,11 +10,13 @@ class SecondaryLatencyStats(Collector):
         if os.path.isfile(self.secondary_statsfile):
             with open(self.secondary_statsfile, 'rb') as fh:
                 first = next(fh).decode()
-                fh.seek(-200, 2)
+                fh.seek(-400, 2)
                 last = fh.readlines()[-1].decode()
                 duration = last.split(',')[-1]
                 stats = {}
-                stats[duration.split(':')[0]] = duration.split(':')[1]
+                latency = duration.split(':')[1]
+                latency = latency.rstrip()
+                stats[duration.split(':')[0]] = latency
         return stats
 
     def sample(self):
