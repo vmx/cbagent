@@ -87,13 +87,15 @@ class SpringN1QLQueryLatency(SpringQueryLatency):
     def __init__(self, settings, workload, prefix=None):
         super(SpringQueryLatency, self).__init__(settings, workload, prefix)
         self.clients = []
-        stale = getattr(workload, 'n1ql_stale', 'ok')
+        scan_consistency = getattr(workload, 'n1ql_scan_consistency',
+                                   'not_bounded')
         queries = settings.new_n1ql_queries
         if queries:
             logger.info("CBAgent will collect latencies for these queries:")
             logger.info(queries)
             for bucket in self.get_buckets():
-                client = N1QLGen(stale, bucket=bucket, host=settings.master_node,
+                client = N1QLGen(scan_consistency, bucket=bucket,
+                                 host=settings.master_node,
                                  username=bucket,
                                  password=settings.bucket_password)
                 self.clients.append((bucket, client))
