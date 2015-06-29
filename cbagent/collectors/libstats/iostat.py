@@ -16,7 +16,7 @@ class IOstat(RemoteStats):
 
     def get_device_name(self, partition):
         for path in (partition, '/'):
-            stdout = self.run("df '{}'|tail -1".format(path),
+            stdout = self.run("df '{}'| head -2 | tail -1".format(path),
                               warn_only=True, quiet=True)
             if not stdout.return_code:
                 name = stdout.split()[0]
@@ -30,9 +30,9 @@ class IOstat(RemoteStats):
             "iostat -xk 1 2 -N {} | grep -v '^$' | tail -n 2".format(device)
         )
         stdout = stdout.split()
-        header = stdout[:len(stdout)/2]
+        header = stdout[:len(stdout) / 2]
         data = dict()
-        for i, value in enumerate(stdout[len(stdout)/2:]):
+        for i, value in enumerate(stdout[len(stdout) / 2:]):
             data[header[i]] = value
         return data
 
