@@ -4,8 +4,9 @@ from logger import logger
 
 from spring.docgen import (ExistingKey, NewDocument, NewNestedDocument,
                            ReverseLookupDocument)
+# TODO vmx 2015-07-07: Remove ViewQueryGen as it is MapreduceQueryGen now
 from spring.querygen import (ViewQueryGen, ViewQueryGenByType, N1QLQueryGen,
-                             SpatialQueryFromFile)
+                             MapreduceQueryGen, SpatialQueryFromFile)
 from spring.cbgen import CBGen, SpatialGen, N1QLGen
 
 from cbagent.collectors import Latency
@@ -64,6 +65,8 @@ class SpringCasLatency(SpringLatency):
     METRICS = ("latency_set", "latency_get", "latency_cas")
 
 
+# TODO vmx 2015-07-07: Remove SpringQueryLatency as it is
+# SpringMapreduceQueryLatency now
 class SpringQueryLatency(SpringLatency):
 
     COLLECTOR = "spring_query_latency"
@@ -77,6 +80,29 @@ class SpringQueryLatency(SpringLatency):
             self.new_queries = ViewQueryGen(ddocs, params)
         else:
             self.new_queries = ViewQueryGenByType(index_type, params)
+
+    def measure(self, client, metric, bucket):
+        key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
+        doc = self.new_docs.next(key)
+        ddoc_name, view_name, query = self.new_queries.next(doc)
+
+        _, latency = client.query(ddoc_name, view_name, query=query)
+        return 1000 * latency  # s -> ms
+
+
+class SpringMapreduceQueryLatency(SpringLatency):
+
+    # TODO vmx 2015-07-07: Adapt all code to use `spring_mapreduce_latency`
+    # and `latency_mapreduce`
+    COLLECTOR = "spring_query_latency"
+
+    METRICS = ("latency_query", )
+
+    def __init__(self, settings, workload, mapreduce_settings, prefix=None):
+        super(SpringMapreduceQueryLatency, self).__init__(settings, workload,
+                                                          prefix)
+        self.new_queries = MapreduceQueryGen(mapreduce_settings.view_names,
+                                             mapreduce_settings.params)
 
     def measure(self, client, metric, bucket):
         key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
