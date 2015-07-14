@@ -102,7 +102,8 @@ class SpringMapreduceQueryLatency(SpringLatency):
         super(SpringMapreduceQueryLatency, self).__init__(settings, workload,
                                                           prefix)
         self.new_queries = MapreduceQueryGen(mapreduce_settings.view_names,
-                                             mapreduce_settings.params)
+                                             mapreduce_settings.params,
+                                             workload.doc_gen)
 
     def measure(self, client, metric, bucket):
         key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
