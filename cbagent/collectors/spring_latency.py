@@ -69,11 +69,10 @@ class SpringQueryLatency(SpringLatency):
     def __init__(self, settings, workload, ddocs, params, index_type,
                  prefix=None):
         super(SpringQueryLatency, self).__init__(settings, workload, prefix)
-        if not settings.new_n1ql_queries:
-            if index_type is None:
-                self.new_queries = ViewQueryGen(ddocs, params)
-            else:
-                self.new_queries = ViewQueryGenByType(index_type, params)
+        if index_type is None:
+            self.new_queries = ViewQueryGen(ddocs, params)
+        else:
+            self.new_queries = ViewQueryGenByType(index_type, params)
 
     def measure(self, client, metric, bucket):
         key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
