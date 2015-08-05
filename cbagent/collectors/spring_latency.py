@@ -2,7 +2,8 @@ import json
 from time import time
 from logger import logger
 
-from spring.docgen import ExistingKey, NewDocument, NewNestedDocument
+from spring.docgen import (ExistingKey, NewDocument, NewNestedDocument,
+                           ReverseLookupDocument)
 from spring.querygen import (ViewQueryGen, ViewQueryGenByType, N1QLQueryGen,
                              SpatialQueryFromFile)
 from spring.cbgen import CBGen, SpatialGen, N1QLGen
@@ -29,8 +30,11 @@ class SpringLatency(Latency):
                                          prefix=prefix)
         if not hasattr(workload, 'doc_gen') or workload.doc_gen == 'old':
             self.new_docs = NewDocument(workload.size)
-        else:
+        elif workload.doc_gen == 'new':
             self.new_docs = NewNestedDocument(workload.size)
+        elif workload.doc_gen == 'reverse_lookup':
+            self.new_docs = ReverseLookupDocument(workload.size,
+                                                  workload.doc_partitions)
         self.items = workload.items
 
     def measure(self, client, metric, bucket):
