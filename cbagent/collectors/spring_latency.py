@@ -123,10 +123,14 @@ class SpringSpatialQueryLatency(SpringLatency):
         return 1000 * latency  # s -> ms
 
 
-class SpringN1QLQueryLatency(SpringQueryLatency):
+class SpringN1QLQueryLatency(SpringLatency):
+
+    COLLECTOR = "spring_query_latency"
+
+    METRICS = ("latency_query", )
 
     def __init__(self, settings, workload, prefix=None):
-        super(SpringQueryLatency, self).__init__(settings, workload, prefix)
+        super(SpringN1QLQueryLatency, self).__init__(settings, workload, prefix)
         self.clients = []
         queries = settings.new_n1ql_queries
         if queries:
